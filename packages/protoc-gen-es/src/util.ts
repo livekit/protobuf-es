@@ -212,6 +212,11 @@ function literalScalarValue(
     case ScalarType.UINT32:
     case ScalarType.SFIXED32:
     case ScalarType.SINT32:
+    case ScalarType.INT64:
+    case ScalarType.SINT64:
+    case ScalarType.SFIXED64:
+    case ScalarType.UINT64:
+    case ScalarType.FIXED64:
       if (typeof value != "number") {
         throw new Error(
           `Unexpected value for ${ScalarType[field.scalar]} ${field.toString()}: ${String(value)}`,
@@ -239,22 +244,6 @@ function literalScalarValue(
         );
       }
       return value;
-    case ScalarType.INT64:
-    case ScalarType.SINT64:
-    case ScalarType.SFIXED64:
-    case ScalarType.UINT64:
-    case ScalarType.FIXED64:
-      if (typeof value != "bigint" && typeof value != "string") {
-        throw new Error(
-          `Unexpected value for ${ScalarType[field.scalar]} ${field.toString()}: ${String(value)}`,
-        );
-      }
-      return {
-        kind: "es_proto_int64",
-        type: field.scalar,
-        longType: field.longType,
-        value,
-      };
   }
 }
 
@@ -298,15 +287,6 @@ function scalarTypeScriptType(type: ScalarType, longType: LongType): Printable {
       return "string";
     case ScalarType.BOOL:
       return "boolean";
-    case ScalarType.UINT64:
-    case ScalarType.SFIXED64:
-    case ScalarType.FIXED64:
-    case ScalarType.SINT64:
-    case ScalarType.INT64:
-      if (longType === LongType.STRING) {
-        return "string";
-      }
-      return "bigint";
     case ScalarType.BYTES:
       return "Uint8Array";
     default:
